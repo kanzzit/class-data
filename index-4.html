@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIII E — MTs Matholiul Huda Bugel</title>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCPHWLI8bnq-RVQNjE0tBDDJpgiHrCfup4",
+    authDomain: "data-viiie.firebaseapp.com",
+    projectId: "data-viiie",
+    storageBucket: "data-viiie.firebasestorage.app",
+    messagingSenderId: "863301123488",
+    appId: "1:863301123488:web:08648cc97e65448ac5b8c5",
+    measurementId: "G-490FB9S3E7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.__fb = { db, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp };
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,500&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root{
+    --paper: #fbf3e2;
+    --paper-2: #f4e9d2;
+    --ink: #1f3d2b;
+    --ink-soft: #4a6350;
+    --coral: #e2574c;
+    --coral-dark: #b6392f;
+    --gold: #e8ac3d;
+    --line: #d9c9a3;
+    --navy: #2a4a6b;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--paper) 0%, var(--paper) 100%),
+      repeating-linear-gradient(transparent, transparent 34px, var(--line) 35px);
+    font-family:'Space Grotesk', sans-serif;
+    color: var(--ink);
+  }
+
+  h1,h2,h3{ font-family:'Fraunces', serif; }
+
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+
+  /* NAVBAR */
+  nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    background: rgba(251,243,226,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 2px solid var(--ink);
+  }
+  .brand{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:26px;
+    color: var(--coral-dark);
+  }
+  .navlinks{
+    display:flex; gap:18px;
+    font-size:13px;
+    font-weight:500;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .navlinks::-webkit-scrollbar{ display:none; }
+  .navlinks a{
+    white-space:nowrap;
+    padding:6px 4px;
+    border-bottom:2px solid transparent;
+    transition: border-color .2s;
+  }
+  .navlinks a:hover{ border-color: var(--coral); }
+
+  /* SECTION helpers */
+  section{ padding: 64px 24px; max-width:1100px; margin:0 auto; }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:11px; letter-spacing:3px;
+    text-transform:uppercase;
+    color: var(--coral-dark);
+    margin-bottom:8px;
+  }
+  .sec-title{
+    font-size: clamp(28px,5vw,42px);
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .sec-desc{
+    color: var(--ink-soft);
+    max-width:560px;
+    font-size:14.5px;
+    line-height:1.6;
+    margin-bottom:36px;
+  }
+
+  /* HERO */
+  .hero{
+    padding: 80px 24px 60px;
+    text-align:center;
+    position:relative;
+  }
+  .hero .tape{
+    width:120px; height:24px;
+    background: repeating-linear-gradient(45deg, var(--gold), var(--gold) 6px, #d89a2d 6px, #d89a2d 12px);
+    margin:0 auto 18px;
+    transform: rotate(-2deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  }
+  .hero .kicker{
+    font-family:'Space Mono', monospace;
+    font-size:12px; letter-spacing:3px; text-transform:uppercase;
+    color: var(--ink-soft);
+  }
+  .hero h1{
+    font-size: clamp(52px, 11vw, 100px);
+    line-height:0.95;
+    margin: 14px 0 18px;
+    color: var(--ink);
+  }
+  .hero h1 span{ color: var(--coral-dark); font-style:italic; }
+  .hero p{
+    max-width:520px; margin:0 auto 28px;
+    color: var(--ink-soft);
+    font-size:15px; line-height:1.6;
+  }
+  .btn-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn{
+    padding:12px 24px;
+    border-radius:999px;
+    font-weight:600; font-size:13.5px;
+    border:2px solid var(--ink);
+    cursor:pointer;
+  }
+  .btn-solid{ background: var(--ink); color: var(--paper); }
+  .btn-outline{ background:transparent; color:var(--ink); }
+
+  .class-photo{
+    margin: 44px auto 0;
+    max-width:640px;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg,#c9d9c9,#e8dcc0);
+    border: 4px solid var(--paper);
+    outline: 2px solid var(--ink);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-soft);
+    font-size:13px;
+    transform: rotate(-1deg);
+    box-shadow: 0 14px 30px rgba(0,0,0,.15);
+  }
+
+  /* TENTANG */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:32px;
+  }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; } }
+  .vm-card{
+    background: var(--paper-2);
+    border:2px solid var(--ink);
+    border-radius:10px;
+    padding:22px;
+    margin-bottom:16px;
+  }
+  .vm-card h3{
+    font-size:17px; margin-bottom:8px; color: var(--coral-dark);
+  }
+  .vm-card p{ font-size:14px; color: var(--ink-soft); line-height:1.6; }
+
+  .walikelas{
+    background: var(--ink);
+    color: var(--paper);
+    border-radius:10px;
+    padding:26px;
+    text-align:center;
+  }
+  .walikelas .av{
+    width:76px; height:76px; border-radius:50%;
+    background: var(--coral);
+    margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat',cursive; font-size:32px; font-weight:700;
+    border:3px solid var(--paper);
+  }
+  .walikelas .role{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; opacity:.75; margin-bottom:4px; }
+  .walikelas h3{ font-size:20px; margin-bottom:8px; }
+  .walikelas p{ font-size:13px; opacity:.85; line-height:1.5; }
+
+  /* ANGGOTA */
+  .board{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+    gap: 38px 20px;
+  }
+  .card-wrap{ perspective:1200px; height:270px; position:relative; }
+  .pin{
+    position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    width:18px; height:18px; border-radius:50%; z-index:5;
+    background: radial-gradient(circle at 35% 30%, #ff9d8f, var(--coral) 60%, var(--coral-dark) 100%);
+    box-shadow: 0 3px 4px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.4);
+  }
+  .card{
+    position:relative; width:100%; height:100%;
+    cursor:pointer; transform-style:preserve-3d;
+    transition: transform .6s cubic-bezier(.4,.2,.2,1);
+  }
+  .card-wrap.flipped .card{ transform: rotateY(180deg); }
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:8px; background: var(--paper);
+    border:2px solid var(--ink);
+    box-shadow: 0 8px 16px rgba(0,0,0,.15);
+    padding:20px 14px 14px;
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+  }
+  .face.back{ transform: rotateY(180deg); justify-content:flex-start; gap:8px; align-items:flex-start; }
+  .avatar{
+    width:64px; height:64px; border-radius:50%;
+    background: var(--navy); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat',cursive; font-weight:700; font-size:26px;
+    border:3px solid var(--ink); margin-bottom:10px;
+  }
+  .m-name{ font-size:15.5px; font-weight:700; line-height:1.2; }
+  .m-absen{ font-family:'Space Mono',monospace; font-size:10px; color:var(--ink-soft); margin-top:3px; }
+  .m-role{
+    margin-top:10px; font-size:11px; font-weight:600;
+    background: var(--gold); color:#3a2a06;
+    padding:3px 10px; border-radius:999px;
+  }
+  .m-cita{ margin-top:8px; font-size:11.5px; color:var(--ink-soft); font-style:italic; }
+  .hint{ margin-top:auto; font-family:'Space Mono',monospace; font-size:9px; color:#a8916a; }
+  .detail{ width:100%; font-size:12px; line-height:1.4; }
+  .detail b{ display:block; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1.5px; color:var(--coral-dark); text-transform:uppercase; margin-bottom:2px; }
+
+  /* FORM ISI DATA */
+  .fill-toggle{
+    margin-bottom:28px;
+  }
+  .fill-form{
+    display:none;
+    background: var(--paper-2);
+    border:2px solid var(--ink);
+    border-radius:12px;
+    padding:24px;
+    margin-bottom:36px;
+    display:none;
+    grid-template-columns: 1fr 1fr;
+    gap:14px;
+  }
+  .fill-form.open{ display:grid; }
+  .fill-form .full{ grid-column: 1 / -1; }
+  @media (max-width:600px){ .fill-form{ grid-template-columns:1fr; } }
+  .fill-form label{
+    font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    color: var(--ink-soft); margin-bottom:5px; display:block;
+  }
+  .fill-form input, .fill-form select{
+    width:100%; padding:10px 12px; border-radius:6px;
+    border:2px solid var(--line); font-family:'Space Grotesk',sans-serif;
+    font-size:13.5px; background:var(--paper);
+  }
+  .fill-form input[type="file"]{ padding:8px; font-size:12px; }
+  .fill-form .full button{
+    background: var(--coral); color:#fff; border:none;
+    padding:12px 26px; border-radius:8px; font-weight:600;
+    font-size:14px; cursor:pointer;
+  }
+  .fill-status{ font-size:12.5px; margin-top:8px; }
+  .fill-status.ok{ color: var(--ink); }
+  .fill-status.err{ color: var(--coral-dark); }
+  .avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .empty-state{
+    font-size:13px; color:var(--ink-soft); font-style:italic;
+    grid-column:1/-1; text-align:center; padding:20px;
+  }
+
+  /* JADWAL */
+  .table-wrap{ overflow-x:auto; border:2px solid var(--ink); border-radius:10px; }
+  table{ border-collapse:collapse; width:100%; min-width:680px; font-size:12.5px; }
+  th,td{ padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap; }
+  th{ background: var(--ink); color:var(--paper); font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:1px; }
+  tr:nth-child(even) td{ background: var(--paper-2); }
+
+  /* GALERI */
+  .gallery{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:14px;
+  }
+  .g-item{
+    aspect-ratio:1; border-radius:8px; border:2px solid var(--ink);
+    background: linear-gradient(135deg,#dbe4d2,#f0e2c0);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-soft); font-size:11px; text-align:center; padding:8px;
+    transform: rotate(0deg);
+    overflow:hidden;
+    position:relative;
+  }
+  .g-item img{ width:100%; height:100%; object-fit:cover; }
+  .g-item .cap{
+    position:absolute; bottom:0; left:0; right:0;
+    background: rgba(31,61,43,0.8); color:#fff;
+    font-size:10px; padding:5px 7px; text-align:left;
+  }
+  .g-item:nth-child(odd){ transform: rotate(-1.5deg); }
+  .g-item:nth-child(even){ transform: rotate(1.5deg); }
+
+  /* STATISTIK */
+  .stats{
+    display:grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
+    gap:20px; text-align:center;
+  }
+  .stat-num{
+    font-family:'Fraunces',serif; font-weight:700;
+    font-size: clamp(34px,6vw,50px);
+    color: var(--coral-dark);
+  }
+  .stat-label{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+
+  /* TIMELINE */
+  .timeline{ position:relative; padding-left:26px; }
+  .timeline::before{
+    content:''; position:absolute; left:6px; top:6px; bottom:6px;
+    width:2px; background: var(--ink); opacity:.3;
+  }
+  .t-item{ position:relative; margin-bottom:30px; }
+  .t-item::before{
+    content:''; position:absolute; left:-26px; top:4px;
+    width:12px; height:12px; border-radius:50%;
+    background: var(--coral); border:2px solid var(--ink);
+  }
+  .t-date{ font-family:'Space Mono',monospace; font-size:10.5px; color:var(--coral-dark); letter-spacing:1px; }
+  .t-item h3{ font-size:17px; margin:4px 0 6px; }
+  .t-item p{ font-size:13px; color:var(--ink-soft); line-height:1.5; max-width:480px; }
+
+  /* KONTAK */
+  .contact-box{
+    background: var(--ink); color:var(--paper);
+    border-radius:12px; padding:32px;
+    display:grid; gap:14px; max-width:520px;
+  }
+  .contact-box input, .contact-box textarea{
+    width:100%; padding:11px 13px; border-radius:6px; border:none;
+    font-family:'Space Grotesk',sans-serif; font-size:13.5px;
+    background: rgba(251,243,226,0.95); color:var(--ink);
+  }
+  .contact-box textarea{ resize:vertical; min-height:90px; }
+  .contact-box button{
+    background: var(--coral); color:#fff; border:none;
+    padding:12px; border-radius:6px; font-weight:600; cursor:pointer; font-size:14px;
+  }
+
+  footer{
+    text-align:center; padding:28px 20px;
+    font-family:'Space Mono',monospace; font-size:11px;
+    color: var(--ink-soft);
+    border-top:2px solid var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce){ .card{ transition:none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">VIII E</div>
+  <div class="navlinks">
+    <a href="#home">Beranda</a>
+    <a href="#about">Tentang</a>
+    <a href="#anggota">Anggota</a>
+    <a href="#jadwal">Jadwal</a>
+    <a href="#galeri">Galeri</a>
+    <a href="#stats">Statistik</a>
+    <a href="#timeline">Kegiatan</a>
+    <a href="#kontak">Kontak</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="tape"></div>
+  <div class="kicker">Buku Tahunan Digital — MTs Matholiul Huda Bugel</div>
+  <h1>Kelas <span>VIII E</span></h1>
+  <p>Satu buku, satu kelas, sejuta cerita. Kenalan sama anak-anak VIII E, jadwal harian, sampai momen-momen kita bareng.</p>
+  <div class="btn-row">
+    <a href="#about" class="btn btn-solid">Jelajahi Kelas</a>
+    <a href="#kontak" class="btn btn-outline">Hubungi Kami</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="eyebrow">Profil Kelas</div>
+  <h2 class="sec-title">Tentang Kelas Kami</h2>
+  <p class="sec-desc">Visi, misi, dan sosok yang membimbing perjalanan VIII E sepanjang tahun ajaran.</p>
+  <div class="about-grid">
+    <div>
+      <div class="vm-card">
+        <h3>Visi Kelas</h3>
+        <p>Menjadi kelas yang kompak, disiplin, kreatif, dan saling mendukung dalam meraih prestasi akademik maupun non-akademik.</p>
+      </div>
+      <div class="vm-card">
+        <h3>Misi Kelas</h3>
+        <p>Menjaga kekompakan dan kebersihan kelas, aktif dalam kegiatan sekolah, saling membantu dalam belajar, dan berani mencoba hal baru.</p>
+      </div>
+    </div>
+    <div class="walikelas">
+      <div class="av">AF</div>
+      <div class="role">WALI KELAS</div>
+      <h3>Bapak Ahmad Fadholi, S.Pd</h3>
+      <p>Pembimbing yang selalu mendampingi VIII E dalam belajar dan berkembang setiap hari.</p>
+    </div>
+  </div>
+</section>
+
+<section id="anggota">
+  <div class="eyebrow">Daftar Nama</div>
+  <h2 class="sec-title">Anggota Kelas</h2>
+  <p class="sec-desc">Ketuk tiap kartu untuk lihat detail. Belum ada namamu di sini? Isi data kamu sendiri lewat form di bawah.</p>
+
+  <div class="fill-toggle">
+    <button class="btn btn-solid" id="toggle-form" type="button">✎ Isi Data Kamu</button>
+  </div>
+
+  <form class="fill-form" id="siswa-form">
+    <div>
+      <label>Nama Lengkap</label>
+      <input type="text" id="f-nama" required placeholder="Nama kamu">
+    </div>
+    <div>
+      <label>No. Absen</label>
+      <input type="text" id="f-absen" required placeholder="Contoh: 09">
+    </div>
+    <div>
+      <label>Tempat, Tanggal Lahir</label>
+      <input type="text" id="f-ttl" required placeholder="Contoh: Jepara, 5 Mei 2011">
+    </div>
+    <div>
+      <label>Hobi</label>
+      <input type="text" id="f-hobi" required placeholder="Hobi kamu">
+    </div>
+    <div>
+      <label>Cita-cita</label>
+      <input type="text" id="f-cita" required placeholder="Cita-cita kamu">
+    </div>
+    <div>
+      <label>Peran di Kelas</label>
+      <select id="f-peran">
+        <option>Anggota</option>
+        <option>Ketua Kelas</option>
+        <option>Wakil Ketua</option>
+        <option>Sekretaris</option>
+        <option>Bendahara</option>
+      </select>
+    </div>
+    <div class="full">
+      <label>Foto (opsional, otomatis dikecilin)</label>
+      <input type="file" id="f-foto" accept="image/*">
+    </div>
+    <div class="full">
+      <button type="submit">Simpan Data</button>
+      <div class="fill-status" id="fill-status"></div>
+    </div>
+  </form>
+
+  <div class="board" id="board">
+    <div class="empty-state">Memuat data siswa…</div>
+  </div>
+</section>
+
+<section id="jadwal">
+  <div class="eyebrow">Agenda Harian</div>
+  <h2 class="sec-title">Jadwal Pelajaran</h2>
+  <p class="sec-desc">Jadwal mingguan kelas VIII E. Sesuaikan isi tabel dengan jadwal sekolah aslinya.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Hari</th><th>Jam 1</th><th>Jam 2</th><th>Jam 3</th><th>Jam 4</th><th>Jam 5</th><th>Jam 6</th></tr>
+      </thead>
+      <tbody id="jadwal-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="galeri">
+  <div class="eyebrow">Dokumentasi</div>
+  <h2 class="sec-title">Galeri Momen</h2>
+  <p class="sec-desc">Kumpulan momen kebersamaan VIII E. Upload foto kegiatan kelas langsung dari sini.</p>
+
+  <div class="fill-toggle">
+    <button class="btn btn-solid" id="toggle-galeri" type="button">📷 Tambah Foto</button>
+  </div>
+
+  <form class="fill-form" id="galeri-form">
+    <div class="full">
+      <label>Pilih Foto</label>
+      <input type="file" id="g-foto" accept="image/*" required>
+    </div>
+    <div class="full">
+      <label>Keterangan (opsional)</label>
+      <input type="text" id="g-caption" placeholder="Contoh: Class meeting Agustus 2026">
+    </div>
+    <div class="full">
+      <button type="submit">Upload Foto</button>
+      <div class="fill-status" id="galeri-status"></div>
+    </div>
+  </form>
+
+  <div class="gallery" id="gallery">
+    <div class="empty-state">Memuat galeri…</div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="eyebrow">Angka Kelas</div>
+  <h2 class="sec-title">Statistik</h2>
+  <div class="stats" id="stats-grid"></div>
+</section>
+
+<section id="timeline">
+  <div class="eyebrow">Perjalanan Kami</div>
+  <h2 class="sec-title">Timeline Kegiatan</h2>
+  <p class="sec-desc">Agenda penting VIII E sepanjang tahun ajaran.</p>
+  <div class="timeline" id="timeline-list"></div>
+</section>
+
+<section id="kontak">
+  <div class="eyebrow">Hubungi Kami</div>
+  <h2 class="sec-title">Kontak</h2>
+  <p class="sec-desc">Punya pesan atau saran buat kelas VIII E? Form ini tampilan saja — untuk beneran jalan perlu backend, bilang aja kalau mau ditambahin.</p>
+  <form class="contact-box" onsubmit="return false;">
+    <input type="text" placeholder="Nama Lengkap">
+    <input type="email" placeholder="Alamat Email">
+    <textarea placeholder="Pesan Anda"></textarea>
+    <button type="submit">Kirim Pesan</button>
+  </form>
+</section>
+
+<footer>VIII E — MTs Matholiul Huda Bugel — Dibuat dengan ❤ oleh kantzy</footer>
+
+<script>
+  // ===== 2. JADWAL — ganti sesuai jadwal asli =====
+  const jadwal = [
+    { hari:"Senin", jam:["Ta'alim","Qiroatul Qur'an","B. Inggris","Informatika","Ushul Fiqih"] },
+    { hari:"Selasa", jam:["B. Jawa","Nahwu","B. Arab","Seni Budaya","B. Indo"] },
+    { hari:"Rabu", jam:["B. Indo","Ke-NU-an","SKI","B. Inggris","IPS","Nahwu"] },
+    { hari:"Kamis", jam:["IPA","Matematika","Qiroatul Kitab","Al-Qur'an Hadist"] },
+    { hari:"Sabtu", jam:["Matematika","PJOK","Fikih","IPA"] },
+    { hari:"Ahad", jam:["Akidah Akhlak","Shorof","IPS","PPKN"] }
+  ];
+
+  // ===== 3. STATISTIK — ganti angka lain sesuai kondisi kelas (Jumlah Siswa otomatis) =====
+  const stats = [
+    { num: 0, label:"Jumlah Siswa", id:"stat-jumlah-siswa" },
+    { num: 10, label:"Mata Pelajaran" },
+    { num: 3, label:"Prestasi Diraih" },
+    { num: 1, label:"Wali Kelas" }
+  ];
+
+  // ===== 4. TIMELINE — ganti sesuai kegiatan kelas =====
+  const timeline = [
+    { tanggal:"Jul 2026", judul:"Awal Semester", desc:"Pembentukan pengurus kelas dan penyusunan tata tertib." },
+    { tanggal:"Sep 2026", judul:"Class Meeting", desc:"Lomba antar kelas untuk mempererat kebersamaan." },
+    { tanggal:"Des 2026", judul:"Pentas Seni", desc:"Penampilan bakat siswa VIII E di acara sekolah." },
+    { tanggal:"Mar 2027", judul:"Ujian Akhir Semester", desc:"Persiapan dan pelaksanaan ujian akhir semester genap." }
+  ];
+
+  // ===== RENDER: Anggota (papan) — kartu real-time ditangani oleh Firestore listener di bawah =====
+  const board = document.getElementById('board');
+
+  // ===== RENDER: Jadwal =====
+  const jbody = document.getElementById('jadwal-body');
+  jadwal.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><b>${row.hari}</b></td>` + row.jam.map(j => `<td>${j}</td>`).join('');
+    jbody.appendChild(tr);
+  });
+
+  // ===== RENDER: Statistik (dengan animasi hitung) =====
+  const statsGrid = document.getElementById('stats-grid');
+  stats.forEach(st => {
+    const div = document.createElement('div');
+    const idAttr = st.id ? `id="${st.id}"` : '';
+    div.innerHTML = `<div class="stat-num" ${idAttr} data-target="${st.num}">0</div><div class="stat-label">${st.label}</div>`;
+    statsGrid.appendChild(div);
+  });
+
+  const animateStats = () => {
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target / 40));
+      const tick = () => {
+        cur = Math.min(cur + step, target);
+        el.textContent = cur;
+        if(cur < target) requestAnimationFrame(tick);
+      };
+      tick();
+    });
+  };
+  const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ animateStats(); statsObs.disconnect(); } });
+  }, { threshold: 0.4 });
+  statsObs.observe(document.getElementById('stats'));
+
+  // ===== RENDER: Timeline =====
+  const tlist = document.getElementById('timeline-list');
+  timeline.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 't-item';
+    div.innerHTML = `<div class="t-date">${t.tanggal}</div><h3>${t.judul}</h3><p>${t.desc}</p>`;
+    tlist.appendChild(div);
+  });
+
+  // ===== TOGGLE FORM =====
+  const toggleBtn = document.getElementById('toggle-form');
+  const fillForm = document.getElementById('siswa-form');
+  toggleBtn.addEventListener('click', () => {
+    fillForm.classList.toggle('open');
+    toggleBtn.textContent = fillForm.classList.contains('open') ? '✕ Tutup Form' : '✎ Isi Data Kamu';
+  });
+
+  // Kompres foto jadi base64 kecil (max 240px, kualitas 0.6) biar muat di Firestore
+  function compressImage(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxSize = 240;
+          let { width, height } = img;
+          if (width > height && width > maxSize){ height *= maxSize/width; width = maxSize; }
+          else if (height > maxSize){ width *= maxSize/height; height = maxSize; }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.6));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Render satu kartu anggota dari data Firestore
+  function renderCard(s){
+    const initials = (s.nama || '?').split(' ').map(w => w[0]).slice(0,2).join('');
+    const wrap = document.createElement('div');
+    wrap.className = 'card-wrap';
+    const avatarInner = s.foto
+      ? `<img src="${s.foto}" alt="${s.nama}">`
+      : initials;
+    wrap.innerHTML = `
+      <div class="pin"></div>
+      <div class="card">
+        <div class="face front">
+          <div class="avatar">${avatarInner}</div>
+          <div class="m-name">${s.nama || '-'}</div>
+          <div class="m-absen">NO. ABSEN ${s.absen || '-'}</div>
+          <div class="m-role">${s.peran || 'Anggota'}</div>
+          <div class="m-cita">Cita-cita: ${s.cita || '-'}</div>
+          <div class="hint">◆ ketuk detail ◆</div>
+        </div>
+        <div class="face back">
+          <div class="detail"><b>TTL</b>${s.ttl || '-'}</div>
+          <div class="detail"><b>Hobi</b>${s.hobi || '-'}</div>
+          <div class="detail"><b>Cita-cita</b>${s.cita || '-'}</div>
+          <div class="detail"><b>Peran</b>${s.peran || 'Anggota'}</div>
+          <div class="hint" style="margin-top:auto">◆ ketuk kembali ◆</div>
+        </div>
+      </div>`;
+    wrap.addEventListener('click', () => wrap.classList.toggle('flipped'));
+    return wrap;
+  }
+
+  // ===== TOGGLE FORM GALERI =====
+  const toggleGaleriBtn = document.getElementById('toggle-galeri');
+  const galeriForm = document.getElementById('galeri-form');
+  toggleGaleriBtn.addEventListener('click', () => {
+    galeriForm.classList.toggle('open');
+    toggleGaleriBtn.textContent = galeriForm.classList.contains('open') ? '✕ Tutup Form' : '📷 Tambah Foto';
+  });
+
+  // Kompres foto galeri (lebih besar dari avatar, max 700px, kualitas 0.65)
+  function compressGaleriImage(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxSize = 700;
+          let { width, height } = img;
+          if (width > height && width > maxSize){ height *= maxSize/width; width = maxSize; }
+          else if (height > maxSize){ width *= maxSize/height; height = maxSize; }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.65));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderGaleriItem(g){
+    const div = document.createElement('div');
+    div.className = 'g-item';
+    div.innerHTML = `<img src="${g.foto}" alt="${g.caption || 'Momen kelas'}">` +
+      (g.caption ? `<div class="cap">${g.caption}</div>` : '');
+    return div;
+  }
+
+  // ===== FIREBASE: submit + listener real-time =====
+  window.addEventListener('DOMContentLoaded', () => {
+    const { db, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } = window.__fb;
+    const siswaCol = collection(db, 'siswa');
+
+    // Listener real-time: render kartu + update statistik jumlah siswa
+    const q = query(siswaCol, orderBy('absen'));
+    onSnapshot(q, (snapshot) => {
+      board.innerHTML = '';
+      if (snapshot.empty){
+        board.innerHTML = '<div class="empty-state">Belum ada yang isi data. Jadilah yang pertama!</div>';
+      } else {
+        snapshot.forEach(doc => board.appendChild(renderCard(doc.data())));
+      }
+      const statEl = document.getElementById('stat-jumlah-siswa');
+      if (statEl){
+        statEl.dataset.target = snapshot.size;
+        statEl.textContent = snapshot.size;
+      }
+    }, (err) => {
+      board.innerHTML = '<div class="empty-state">Gagal memuat data. Cek koneksi atau setup Firestore.</div>';
+      console.error(err);
+    });
+
+    // Submit form
+    fillForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('fill-status');
+      const submitBtn = fillForm.querySelector('button[type="submit"]');
+      statusEl.className = 'fill-status';
+      statusEl.textContent = 'Menyimpan...';
+      submitBtn.disabled = true;
+
+      try {
+        const fotoFile = document.getElementById('f-foto').files[0];
+        let fotoData = null;
+        if (fotoFile){
+          if (fotoFile.size > 8 * 1024 * 1024){
+            throw new Error('Ukuran foto terlalu besar, pilih yang lain ya.');
+          }
+          fotoData = await compressImage(fotoFile);
+        }
+
+        await addDoc(siswaCol, {
+          nama: document.getElementById('f-nama').value.trim(),
+          absen: document.getElementById('f-absen').value.trim(),
+          ttl: document.getElementById('f-ttl').value.trim(),
+          hobi: document.getElementById('f-hobi').value.trim(),
+          cita: document.getElementById('f-cita').value.trim(),
+          peran: document.getElementById('f-peran').value,
+          foto: fotoData,
+          createdAt: serverTimestamp()
+        });
+
+        statusEl.className = 'fill-status ok';
+        statusEl.textContent = 'Berhasil! Data kamu sudah muncul di daftar anggota ✓';
+        fillForm.reset();
+        setTimeout(() => {
+          fillForm.classList.remove('open');
+          toggleBtn.textContent = '✎ Isi Data Kamu';
+          statusEl.textContent = '';
+        }, 2200);
+      } catch (err){
+        statusEl.className = 'fill-status err';
+        statusEl.textContent = 'Gagal menyimpan: ' + err.message;
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Galeri: listener real-time
+    const galeriCol = collection(db, 'galeri');
+    const gq = query(galeriCol, orderBy('createdAt', 'desc'));
+    onSnapshot(gq, (snapshot) => {
+      gallery.innerHTML = '';
+      if (snapshot.empty){
+        gallery.innerHTML = '<div class="empty-state">Belum ada foto. Jadilah yang pertama upload!</div>';
+      } else {
+        snapshot.forEach(doc => gallery.appendChild(renderGaleriItem(doc.data())));
+      }
+    }, (err) => {
+      gallery.innerHTML = '<div class="empty-state">Gagal memuat galeri. Cek koneksi atau setup Firestore.</div>';
+      console.error(err);
+    });
+
+    // Galeri: submit
+    galeriForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const gStatus = document.getElementById('galeri-status');
+      const gBtn = galeriForm.querySelector('button[type="submit"]');
+      gStatus.className = 'fill-status';
+      gStatus.textContent = 'Mengunggah...';
+      gBtn.disabled = true;
+
+      try {
+        const file = document.getElementById('g-foto').files[0];
+        if (!file) throw new Error('Pilih foto dulu ya.');
+        if (file.size > 10 * 1024 * 1024) throw new Error('Ukuran foto terlalu besar, pilih yang lain ya.');
+
+        const fotoData = await compressGaleriImage(file);
+        await addDoc(galeriCol, {
+          foto: fotoData,
+          caption: document.getElementById('g-caption').value.trim(),
+          createdAt: serverTimestamp()
+        });
+
+        gStatus.className = 'fill-status ok';
+        gStatus.textContent = 'Berhasil! Foto sudah muncul di galeri ✓';
+        galeriForm.reset();
+        setTimeout(() => {
+          galeriForm.classList.remove('open');
+          toggleGaleriBtn.textContent = '📷 Tambah Foto';
+          gStatus.textContent = '';
+        }, 2200);
+      } catch (err){
+        gStatus.className = 'fill-status err';
+        gStatus.textContent = 'Gagal mengunggah: ' + err.message;
+        console.error(err);
+      } finally {
+        gBtn.disabled = false;
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
